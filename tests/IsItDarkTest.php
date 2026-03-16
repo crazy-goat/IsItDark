@@ -247,4 +247,78 @@ class IsItDarkTest extends TestCase
 
         self::assertSame($sunrise1, $sunrise2);
     }
+
+    public function testNextSunriseOnNormalDay(): void
+    {
+        $dt = new DateTimeImmutable('2026-03-16 12:00:00', $this->warsawTz);
+        $isItDark = new IsItDark($this->warsaw, $dt);
+
+        $next = $isItDark->nextSunrise();
+
+        self::assertNotNull($next);
+        self::assertGreaterThan($dt->getTimestamp(), $next->getTimestamp());
+    }
+
+    public function testNextSunsetOnNormalDay(): void
+    {
+        $dt = new DateTimeImmutable('2026-03-16 12:00:00', $this->warsawTz);
+        $isItDark = new IsItDark($this->warsaw, $dt);
+
+        $next = $isItDark->nextSunset();
+
+        self::assertNotNull($next);
+        self::assertGreaterThan($dt->getTimestamp(), $next->getTimestamp());
+    }
+
+    public function testNextSunriseAtNightReturnsNextMorningSunrise(): void
+    {
+        $dt = new DateTimeImmutable('2026-03-16 23:00:00', $this->warsawTz);
+        $isItDark = new IsItDark($this->warsaw, $dt);
+
+        $next = $isItDark->nextSunrise();
+
+        self::assertNotNull($next);
+        self::assertGreaterThan($dt->getTimestamp(), $next->getTimestamp());
+        self::assertLessThan($dt->getTimestamp() + 86400, $next->getTimestamp());
+    }
+
+    public function testNextSunriseDuringPolarNightReturnsFutureDate(): void
+    {
+        $tz = new DateTimeZone('Europe/Oslo');
+        $dt = new DateTimeImmutable('2026-12-21 12:00:00', $tz);
+        $isItDark = new IsItDark($this->tromso, $dt);
+
+        self::assertTrue($isItDark->isPolarNight());
+
+        $next = $isItDark->nextSunrise();
+
+        self::assertNotNull($next);
+        self::assertGreaterThan($dt->getTimestamp(), $next->getTimestamp());
+    }
+
+    public function testNextSunsetDuringPolarDayReturnsFutureDate(): void
+    {
+        $tz = new DateTimeZone('Europe/Oslo');
+        $dt = new DateTimeImmutable('2026-06-21 12:00:00', $tz);
+        $isItDark = new IsItDark($this->tromso, $dt);
+
+        self::assertTrue($isItDark->isPolarDay());
+
+        $next = $isItDark->nextSunset();
+
+        self::assertNotNull($next);
+        self::assertGreaterThan($dt->getTimestamp(), $next->getTimestamp());
+    }
+
+    public function testNextSunrisePreservesTimezone(): void
+    {
+        $tz = new DateTimeZone('America/New_York');
+        $dt = new DateTimeImmutable('2026-03-16 23:00:00', $tz);
+        $isItDark = new IsItDark($this->warsaw, $dt);
+
+        $next = $isItDark->nextSunrise();
+
+        self::assertNotNull($next);
+        self::assertSame('America/New_York', $next->getTimezone()->getName());
+    }
 }

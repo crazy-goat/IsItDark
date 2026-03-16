@@ -128,6 +128,8 @@ new IsItDark(
 | `hasSunset()` | `bool` | Sunset occurs today |
 | `isPolarDay()` | `bool` | Sun never sets |
 | `isPolarNight()` | `bool` | Sun never rises |
+| `nextSunrise()` | `?DateTimeImmutable` | Next sunrise after current datetime |
+| `nextSunset()` | `?DateTimeImmutable` | Next sunset after current datetime |
 | `withDateTime(DateTimeInterface)` | `IsItDark` | New instance with different time |
 | `withLocation(Location)` | `IsItDark` | New instance with different location |
 | `toArray()` | `array` | All data as associative array |

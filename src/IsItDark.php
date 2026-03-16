@@ -142,6 +142,38 @@ final class IsItDark
         return $data->sunrise === null && $data->sunset === null && $data->sunAltitude < 0.0;
     }
 
+    public function nextSunrise(): ?DateTimeImmutable
+    {
+        $tz = $this->dateTime->getTimezone();
+        $candidate = $this->withDateTime($this->dateTime->modify('+1 day')->setTime(0, 0));
+
+        for ($i = 0; $i < 366; $i++) {
+            $sunrise = $candidate->sunrise();
+            if ($sunrise !== null && $sunrise->getTimestamp() > $this->dateTime->getTimestamp()) {
+                return $sunrise->setTimezone($tz);
+            }
+            $candidate = $candidate->withDateTime($candidate->dateTime()->modify('+1 day'));
+        }
+
+        return null;
+    }
+
+    public function nextSunset(): ?DateTimeImmutable
+    {
+        $tz = $this->dateTime->getTimezone();
+        $candidate = $this->withDateTime($this->dateTime->setTime(0, 0));
+
+        for ($i = 0; $i < 366; $i++) {
+            $sunset = $candidate->sunset();
+            if ($sunset !== null && $sunset->getTimestamp() > $this->dateTime->getTimestamp()) {
+                return $sunset->setTimezone($tz);
+            }
+            $candidate = $candidate->withDateTime($candidate->dateTime()->modify('+1 day'));
+        }
+
+        return null;
+    }
+
     public function withDateTime(DateTimeInterface $dateTime): self
     {
         return new self($this->location, $dateTime, $this->calculator);
