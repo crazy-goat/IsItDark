@@ -53,7 +53,11 @@ class IsItDarkTest extends TestCase
     {
         $dt = new DateTimeImmutable('2026-03-16 12:00:00', $this->warsawTz);
         $isItDark = new IsItDark($this->warsaw, $dt);
-        self::assertLessThan($isItDark->sunset()->getTimestamp(), $isItDark->sunrise()->getTimestamp());
+        $sunrise = $isItDark->sunrise();
+        $sunset = $isItDark->sunset();
+        self::assertNotNull($sunrise);
+        self::assertNotNull($sunset);
+        self::assertLessThan($sunset->getTimestamp(), $sunrise->getTimestamp());
     }
 
     public function testDayLengthPlusNightLengthEquals86400(): void
@@ -176,6 +180,7 @@ class IsItDarkTest extends TestCase
         $array = $isItDark->toArray();
 
         self::assertArrayHasKey('location', $array);
+        self::assertIsArray($array['location']);
         self::assertArrayHasKey('latitude', $array['location']);
         self::assertArrayHasKey('longitude', $array['location']);
         self::assertArrayHasKey('datetime', $array);
@@ -215,6 +220,7 @@ class IsItDarkTest extends TestCase
         $isItDark = new IsItDark($this->warsaw, $dt);
         $array = $isItDark->toArray();
 
+        self::assertIsString($array['datetime']);
         self::assertMatchesRegularExpression('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/', $array['datetime']);
     }
 
