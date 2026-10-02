@@ -19,5 +19,6 @@ final class SolarData
         public readonly ?DateTimeImmutable $astronomicalDawn,
         public readonly ?DateTimeImmutable $astronomicalDusk,
         public readonly float $sunAltitude,
-    ) {}
+    ) {
+    }
 }

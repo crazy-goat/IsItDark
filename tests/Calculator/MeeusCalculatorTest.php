@@ -144,7 +144,7 @@ class MeeusCalculatorTest extends TestCase
         DateTimeImmutable $actual,
         string $expectedStr,
         DateTimeZone $tz,
-        int $toleranceMinutes
+        int $toleranceMinutes,
     ): void {
         $expected = new DateTimeImmutable($expectedStr, $tz);
         $diff = abs($actual->getTimestamp() - $expected->getTimestamp());
@@ -156,8 +156,8 @@ class MeeusCalculatorTest extends TestCase
                 $actual->format('H:i:s'),
                 $toleranceMinutes,
                 $expected->format('H:i:s'),
-                $diff
-            )
+                $diff,
+            ),
         );
     }
 }

@@ -122,7 +122,7 @@ class MeeusCalculator implements SolarCalculatorInterface
         float $jdNoon,
         float $depression,
         bool $isRise,
-        DateTimeZone $tz
+        DateTimeZone $tz,
     ): ?DateTimeImmutable {
         $T = ($jdNoon - 2451545.0) / 36525.0;
         $decl = $this->sunDeclination($T);
@@ -190,7 +190,7 @@ class MeeusCalculator implements SolarCalculatorInterface
         $HArad = deg2rad($HA);
 
         return rad2deg(asin(
-            sin($latRad) * sin($declRad) + cos($latRad) * cos($declRad) * cos($HArad)
+            sin($latRad) * sin($declRad) + cos($latRad) * cos($declRad) * cos($HArad),
         ));
     }
 }
