@@ -1,2 +1,11 @@
 .worktrees/
 vendor/
+
+/composer.phar
+/.idea/
+/.phpunit.result.cache
+/.phpunit.cache/
+/var/
+/findings.md
+/review.md
+/.env.worktree
