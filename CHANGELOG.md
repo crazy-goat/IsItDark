@@ -5,6 +5,10 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-02
+
+First release: a PHP 8.1+ library that tells whether it is dark at a given location and time, with sunrise, sunset, twilight phases, day length and polar day/night handling (NOAA and Meeus calculators).
+
 ### Added
 - [#2] `bin/lint.sh` (composer validate and audit, php-cs-fixer, Rector, PHPStan at level max,
   shellcheck; `--fix` applies fixes) with `friendsofphp/php-cs-fixer`, `rector/rector` and
