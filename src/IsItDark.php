@@ -14,7 +14,7 @@ use DateTimeInterface;
 final class IsItDark
 {
     private DateTimeImmutable $dateTime;
-    private SolarCalculatorInterface $calculator;
+    private readonly SolarCalculatorInterface $calculator;
     private ?SolarData $solarData = null;
 
     public function __construct(
@@ -22,7 +22,7 @@ final class IsItDark
         ?DateTimeInterface $dateTime = null,
         ?SolarCalculatorInterface $calculator = null,
     ) {
-        if ($dateTime === null) {
+        if (!$dateTime instanceof \DateTimeInterface) {
             $this->dateTime = new DateTimeImmutable('now');
         } elseif ($dateTime instanceof DateTimeImmutable) {
             $this->dateTime = $dateTime;
@@ -106,10 +106,10 @@ final class IsItDark
     public function dayLength(): int
     {
         $data = $this->getData();
-        if ($data->sunrise === null && $data->sunset === null) {
+        if (!$data->sunrise instanceof \DateTimeImmutable && !$data->sunset instanceof \DateTimeImmutable) {
             return $data->sunAltitude >= 0.0 ? 86400 : 0;
         }
-        if ($data->sunrise === null || $data->sunset === null) {
+        if (!$data->sunrise instanceof \DateTimeImmutable || !$data->sunset instanceof \DateTimeImmutable) {
             return 0;
         }
         return $data->sunset->getTimestamp() - $data->sunrise->getTimestamp();
@@ -122,24 +122,24 @@ final class IsItDark
 
     public function hasSunrise(): bool
     {
-        return $this->getData()->sunrise !== null;
+        return $this->getData()->sunrise instanceof \DateTimeImmutable;
     }
 
     public function hasSunset(): bool
     {
-        return $this->getData()->sunset !== null;
+        return $this->getData()->sunset instanceof \DateTimeImmutable;
     }
 
     public function isPolarDay(): bool
     {
         $data = $this->getData();
-        return $data->sunrise === null && $data->sunset === null && $data->sunAltitude >= 0.0;
+        return !$data->sunrise instanceof \DateTimeImmutable && !$data->sunset instanceof \DateTimeImmutable && $data->sunAltitude >= 0.0;
     }
 
     public function isPolarNight(): bool
     {
         $data = $this->getData();
-        return $data->sunrise === null && $data->sunset === null && $data->sunAltitude < 0.0;
+        return !$data->sunrise instanceof \DateTimeImmutable && !$data->sunset instanceof \DateTimeImmutable && $data->sunAltitude < 0.0;
     }
 
     public function nextSunrise(): ?DateTimeImmutable
@@ -149,7 +149,7 @@ final class IsItDark
 
         for ($i = 0; $i < 366; $i++) {
             $sunrise = $candidate->sunrise();
-            if ($sunrise !== null && $sunrise->getTimestamp() > $this->dateTime->getTimestamp()) {
+            if ($sunrise instanceof \DateTimeImmutable && $sunrise->getTimestamp() > $this->dateTime->getTimestamp()) {
                 return $sunrise->setTimezone($tz);
             }
             $candidate = $candidate->withDateTime($candidate->dateTime()->modify('+1 day'));
@@ -165,7 +165,7 @@ final class IsItDark
 
         for ($i = 0; $i < 366; $i++) {
             $sunset = $candidate->sunset();
-            if ($sunset !== null && $sunset->getTimestamp() > $this->dateTime->getTimestamp()) {
+            if ($sunset instanceof \DateTimeImmutable && $sunset->getTimestamp() > $this->dateTime->getTimestamp()) {
                 return $sunset->setTimezone($tz);
             }
             $candidate = $candidate->withDateTime($candidate->dateTime()->modify('+1 day'));
@@ -184,6 +184,9 @@ final class IsItDark
         return new self($location, $this->dateTime, $this->calculator);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         $formatDt = static fn(?DateTimeImmutable $dt): ?string => $dt?->format('c');
@@ -217,9 +220,7 @@ final class IsItDark
 
     private function getData(): SolarData
     {
-        if ($this->solarData === null) {
-            $this->solarData = $this->calculator->calculate($this->location, $this->dateTime);
-        }
+        $this->solarData ??= $this->calculator->calculate($this->location, $this->dateTime);
         return $this->solarData;
     }
 }

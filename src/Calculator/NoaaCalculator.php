@@ -143,7 +143,7 @@ class NoaaCalculator implements SolarCalculatorInterface
         float $jdNoon,
         float $zenith,
         bool $isRise,
-        DateTimeZone $tz
+        DateTimeZone $tz,
     ): ?DateTimeImmutable {
         $T = ($jdNoon - 2451545.0) / 36525.0;
         $eqTime = $this->equationOfTime($T);
@@ -189,7 +189,7 @@ class NoaaCalculator implements SolarCalculatorInterface
         $haRad = deg2rad($hourAngle);
 
         return rad2deg(asin(
-            sin($latRad) * sin($declRad) + cos($latRad) * cos($declRad) * cos($haRad)
+            sin($latRad) * sin($declRad) + cos($latRad) * cos($declRad) * cos($haRad),
         ));
     }
 }

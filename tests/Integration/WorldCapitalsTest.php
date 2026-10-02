@@ -29,9 +29,6 @@ class WorldCapitalsTest extends TestCase
         $isItDarkWinterNoon = new IsItDark($location, $winterNoon);
         $isItDarkSummerMidnight = new IsItDark($location, $summerMidnight);
 
-        self::assertIsBool($isItDarkSummerNoon->isDark(), "{$capital}, {$country}: isDark() should return bool at summer noon");
-        self::assertIsBool($isItDarkWinterNoon->isDark(), "{$capital}, {$country}: isDark() should return bool at winter noon");
-        self::assertIsBool($isItDarkSummerMidnight->isDark(), "{$capital}, {$country}: isDark() should return bool at summer midnight");
 
         self::assertNotSame($isItDarkSummerNoon->isDark(), $isItDarkSummerNoon->isDay(), "{$capital}, {$country}: isDark() and isDay() must be opposites");
         self::assertNotSame($isItDarkWinterNoon->isDark(), $isItDarkWinterNoon->isDay(), "{$capital}, {$country}: isDark() and isDay() must be opposites");
@@ -58,6 +55,9 @@ class WorldCapitalsTest extends TestCase
         }
     }
 
+    /**
+     * @return list<array{string, string, int|float, int|float}>
+     */
     public static function capitalsProvider(): array
     {
         return [

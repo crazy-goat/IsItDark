@@ -6,10 +6,10 @@ namespace CrazyGoat\IsItDark;
 
 use CrazyGoat\IsItDark\Exception\InvalidLocation;
 
-final readonly class Location
+final class Location
 {
-    private float $latitude;
-    private float $longitude;
+    private readonly float $latitude;
+    private readonly float $longitude;
 
     public function __construct(float $latitude, float $longitude)
     {
